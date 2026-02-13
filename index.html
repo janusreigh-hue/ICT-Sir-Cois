@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Good Grades Question</title>
+<style>
+  body {
+    margin: 0;
+    height: 100vh;
+    background-color: #111;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  h1 {
+    position: absolute;
+    top: 20px;
+    font-size: 2em;
+    text-align: center;
+    width: 100%;
+    z-index: 10;
+  }
+
+  .button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 60%;
+    z-index: 10;
+  }
+
+  button {
+    padding: 15px 30px;
+    font-size: 1.5em;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    transition: transform 0.2s;
+    position: relative;
+    z-index: 10;
+  }
+
+  #yes {
+    background-color: #4caf50;
+    color: white;
+    order: 1;
+  }
+
+  #no {
+    background-color: #f44336;
+    color: white;
+    order: 2;
+    position: absolute;
+  }
+
+  .number {
+    position: absolute;
+    font-size: 1.2em;
+    color: rgba(255, 255, 255, 0.5);
+    pointer-events: none; /* untouchable numbers */
+    user-select: none;
+  }
+</style>
+</head>
+<body>
+<h1>Sir, can we have good grades like in the background?</h1>
+<div class="button-container">
+  <button id="yes">Yes</button>
+  <button id="no">No</button>
+</div>
+
+<script>
+const yesBtn = document.getElementById('yes');
+const noBtn = document.getElementById('no');
+let yesScale = 1;
+
+// Position Yes left and No right initially
+function setInitialPositions() {
+  yesBtn.style.left = '10%';
+  yesBtn.style.top = '50%';
+  noBtn.style.left = '80%';
+  noBtn.style.top = '50%';
+}
+setInitialPositions();
+
+// Function to make No run but never near Yes
+function moveNo() {
+  const buffer = 150; // minimum distance from Yes
+  let x, y;
+  do {
+    x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+    y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+  } while (
+    Math.abs(x - yesBtn.offsetLeft) < buffer &&
+    Math.abs(y - yesBtn.offsetTop) < buffer
+  );
+
+  noBtn.style.left = x + 'px';
+  noBtn.style.top = y + 'px';
+
+  // Grow Yes button
+  yesScale += 0.2;
+  yesBtn.style.transform = `scale(${yesScale})`;
+}
+
+// Events: No runs on hover or click
+noBtn.addEventListener('mouseenter', moveNo);
+noBtn.addEventListener('click', moveNo);
+
+// Create moving background numbers
+const numbersArr = [95, 93, 94, 98];
+const numElements = [];
+
+for (let i = 0; i < 50; i++) {
+  const num = document.createElement('div');
+  num.className = 'number';
+  num.textContent = numbersArr[Math.floor(Math.random() * numbersArr.length)];
+  num.style.left = Math.random() * window.innerWidth + 'px';
+  num.style.top = Math.random() * window.innerHeight + 'px';
+  num.style.fontSize = 12 + Math.random() * 24 + 'px';
+  document.body.appendChild(num);
+
+  numElements.push({
+    el: num,
+    vx: (Math.random() - 0.5) * 0.5,
+    vy: (Math.random() - 0.5) * 0.5
+  });
+}
+
+// Animate floating numbers
+function animateNumbers() {
+  numElements.forEach(n => {
+    let x = parseFloat(n.el.style.left);
+    let y = parseFloat(n.el.style.top);
+
+    x += n.vx;
+    y += n.vy;
+
+    if (x > window.innerWidth) x = 0;
+    if (x < 0) x = window.innerWidth;
+    if (y > window.innerHeight) y = 0;
+    if (y < 0) y = window.innerHeight;
+
+    n.el.style.left = x + 'px';
+    n.el.style.top = y + 'px';
+  });
+
+  requestAnimationFrame(animateNumbers);
+}
+animateNumbers();
+</script>
+</body>
+  </html>
